@@ -19,18 +19,20 @@ def lagrange(x_list, y_list):
 
 
 def decrypt(shares, p):
+    print(shares)
     # 整数じゃないときエラーを返す
     for share in shares:
         if int != type(share):
             print("share is not int type.")
-            print("share:", share, "shares:", shares)
-            print("type(share):", type(share))
+            # print("share:", share, "shares:", shares)
+            # print("type(share):", type(share))
 
     k = len(shares)
     x_list = [i + 1 for i in range(k)]
     y_list = shares
     f0 = lagrange(x_list, y_list)
 
+    print(f0, p)
     return int(f0 % p)
 
 
@@ -58,3 +60,9 @@ def encrypt(secret_int, k, n, p):
 
     # shares = [int(share) for share in shares]
     return shares
+
+
+def array_encrypt(array1D, k, n, p):
+    # 1次元配列の各要素を秘密分散する
+    encrypted_array = [encrypt(int(element), k, n, p) for element in array1D]
+    return encrypted_array
