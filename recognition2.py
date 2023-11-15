@@ -29,8 +29,8 @@ def recognition(random_idx, x_test, loaded_weights, loaded_biases):
             loaded_weights2[i][j] = np.float64(shares[1])
             loaded_weights3[i][j] = np.float64(shares[2])
 
-            if int_weights != shamir.decrypt(shares[:K], P):
-                ValueError("error", int_weights, shamir.decrypt(shares[:K], P))
+            # if int_weights != shamir.decrypt(shares[:K], P):
+            #     ValueError("error", int_weights, shamir.decrypt(shares[:K], P))
 
     # 検出用画像データを秘密分散する
     # 秘密分散は正の整数しか扱えないので、Accuracy_image倍してintに変換する
@@ -48,8 +48,8 @@ def recognition(random_idx, x_test, loaded_weights, loaded_biases):
         test_image_shares2.append(shares[1])
         test_image_shares3.append(shares[2])
 
-        if test_image[i] != shamir.decrypt(shares[:K], P):
-            ValueError("error", test_image[i], shamir.decrypt(shares[:K], P))
+        # if test_image[i] != shamir.decrypt(shares[:K], P):
+        #     ValueError("error", test_image[i], shamir.decrypt(shares[:K], P))
 
     prediction0 = util.predict(x_test[random_idx], loaded_weights, loaded_biases)
     prediction1 = util.predict(test_image_shares1, loaded_weights1, loaded_biases)
@@ -77,17 +77,13 @@ def main():
 
     # 予測を実行
     prediction, prediction0 = recognition(random_idx, x_test, loaded_weights, loaded_biases)
-    print("秘密分散前:", prediction0)
-    print("秘密分散前予測結果:", util.array_max(prediction0))
-    print("秘密分散後:", prediction)
-    print("秘密分散後予測結果:", util.array_max(prediction))
 
     # 画像を表示
-    # plt.imshow(x_test[random_idx].reshape(28, 28), cmap="gray")
-    # plt.title(
-    #     f"Before Shamir: {util.array_max(prediction0)}, After Shamir: {util.array_max(prediction)}, Actual: {np.argmax(y_test[random_idx])}")
-    # plt.axis('off')
-    # plt.show()
+    plt.imshow(x_test[random_idx].reshape(28, 28), cmap="gray")
+    plt.title(
+        f"Before Shamir: {util.array_max(prediction0)}, After Shamir: {util.array_max(prediction)}, Actual: {np.argmax(y_test[random_idx])}")
+    plt.axis('off')
+    plt.show()
 
 
 if __name__ == '__main__':

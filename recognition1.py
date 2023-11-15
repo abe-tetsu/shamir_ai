@@ -22,17 +22,15 @@ def recognition(random_idx, x_test, loaded_weights, loaded_biases):
         for j in range(len(loaded_weights[0])):
             # 重みは float64 型なので、10000000倍して、int型に変換する
             int_weights = int(loaded_weights[i][j] * Accuracy_weight)
-            # print(loaded_weights[i][j], int_weights)
 
             shares = shamir.encrypt(int_weights, K, N, P)
-            if int_weights != shamir.decrypt(shares[:K], P):
-                raise ValueError("error", int_weights, shamir.decrypt(shares[:K], P))
+            # if int_weights != shamir.decrypt(shares[:K], P):
+            #     raise ValueError("error", int_weights, shamir.decrypt(shares[:K], P))
 
             loaded_weights1[i][j] = int(shares[0])
             loaded_weights2[i][j] = int(shares[1])
             loaded_weights3[i][j] = int(shares[2])
 
-    # 秘密分散は正の整数しか扱えないので、Accuracy_image倍してintに変換する
     test_image = x_test[random_idx]
 
     # 予測を実行
@@ -44,36 +42,11 @@ def recognition(random_idx, x_test, loaded_weights, loaded_biases):
     # 予測を復元
     prediction = []
     for i in range(len(prediction0)):
-        # print("type↓")
-        # print(type(prediction0[i]), type(prediction1[i]), type(prediction2[i]))
         shares = [int(prediction1[i]), int(prediction2[i])]
         prediction.append(shamir.decrypt(shares, P))
-    #
-    # for i in range(len(prediction)):
-    #     prediction0[i] = int(prediction0[i] * Accuracy_weight)
-    #
-    # print("prediction0:", prediction0)
-    # print("prediction1:", prediction1)
-    # print("prediction2:", prediction2)
-    # print("prediction :", prediction)
-    # prediction12 = prediction
-    # prediction23 = []
-    # for i in range(len(prediction0)):
-    #     shares = [prediction2[i], prediction3[i]]
-    #     prediction23.append(shamir.decrypt(shares, P))
-    #
-    # predition13 = []
-    # for i in range(len(prediction0)):
-    #     shares = [prediction1[i], prediction3[i]]
-    #     predition13.append(shamir.decrypt(shares, P))
 
     # prediction0の要素を全てAccuracy倍してintに変換する　
     prediction0 = [int(prediction0[i] * Accuracy_weight) for i in range(len(prediction0))]
-
-    # print("prediction0 ", prediction0, "max:", util.array_max(prediction0))
-    # print("prediction12", prediction12, "max:", util.array_max(prediction12))
-    # print("prediction23", prediction23, "max:", util.array_max(prediction23))
-    # print("prediction13", predition13, "max:", util.array_max(predition13))
 
     return prediction, prediction0
 

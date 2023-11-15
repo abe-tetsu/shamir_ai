@@ -30,14 +30,15 @@ def main():
         if np.argmax(prediction) == np.argmax(prediction_shamir):
             correct_count_before_shamir += 1
 
+    print(f"テストデータ数　　　　　　: {TestNum}")
     accuracy = correct_count / TestNum
-    print(f"Accuracy: {accuracy * 100:.2f}%")
+    print(f"精度　　　　　　　　　　　: {accuracy * 100:.2f}%")
 
     accuracy_before_shamir = correct_count_before_shamir / TestNum
-    print(f"Accuracy_before_shamir: {accuracy_before_shamir * 100:.2f}%")
+    print(f"秘密分散前の出力との一致率: {accuracy_before_shamir * 100:.2f}%")
 
     test_end = time.time()
-    print(f"Test duration: {test_end - test_start} seconds")
+    print(f"テスト時間　　　　　　　　: {test_end - test_start} seconds")
 
 
 if __name__ == '__main__':

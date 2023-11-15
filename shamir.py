@@ -19,20 +19,16 @@ def lagrange(x_list, y_list):
 
 
 def decrypt(shares, p):
-    print(shares)
     # 整数じゃないときエラーを返す
     for share in shares:
         if int != type(share):
             print("share is not int type.")
-            # print("share:", share, "shares:", shares)
-            # print("type(share):", type(share))
 
     k = len(shares)
     x_list = [i + 1 for i in range(k)]
     y_list = shares
     f0 = lagrange(x_list, y_list)
 
-    print(f0, p)
     return int(f0 % p)
 
 

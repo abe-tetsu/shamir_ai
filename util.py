@@ -26,6 +26,9 @@ def load_weights(filename="weights.pkl"):
 
     return data['weights'], data['biases']
 
+    # #重みの最小値を探索
+    # min_weight_value = np.min(data['weights'])
+    #
     # # 最小値が(-P/2)を下回った場合、エラーを出す
     # if min_weight_value < -P / 2:
     #     raise ValueError("Minimum weight value is less than -P/2.", min_weight_value)
@@ -36,7 +39,7 @@ def load_weights(filename="weights.pkl"):
     # # 最大値が(P/2)を上回った場合、エラーを出す
     # if max_weight_value > P / 2:
     #     raise ValueError("Maximum weight value is greater than P/2.", max_weight_value)
-
+    #
     # return data['weights'], data['biases']
 
 
