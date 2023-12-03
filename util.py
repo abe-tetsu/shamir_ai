@@ -43,6 +43,13 @@ def load_weights(filename="weights.pkl"):
     # return data['weights'], data['biases']
 
 
+def load_encrypted_weight(filename):
+    with open(filename, 'rb') as f:
+        data = pickle.load(f)
+
+    return data['weights'], data['biases']
+
+
 def load_data():
     (x_train, y_train), (x_test, y_test) = mnist.load_data()
     x_train = x_train.reshape(60000, 784)
@@ -87,7 +94,7 @@ def predict(x, weights, biases):
 
     # バイアスの長さを確認
     if len(biases[0]) != 10:
-        raise ValueError("Biases must have a length of 10.")
+        raise ValueError("Biases must have a length of 10: ", len(biases[0]))
 
     # 出力値を格納する配列を初期化（10個の出力ノードに対応）
     output_values = [0] * 10
@@ -205,4 +212,4 @@ def outer(x, y):
     for i in x:
         for j in y:
             result.append(i * j)
-    return np.array(result)
+    return np.array(result, dtype=np.int64)

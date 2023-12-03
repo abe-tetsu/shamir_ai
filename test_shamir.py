@@ -1,7 +1,7 @@
 import unittest
 from deep_learning import shamir
 import random
-
+import util
 
 class TestShamir(unittest.TestCase):
     def test_shamir_encrypt(self):
@@ -70,6 +70,62 @@ class TestShamir(unittest.TestCase):
 
         self.assertEqual(f0, 100)
 
+    def test_minus(self):
+        secret = -100
+        k = 2
+        n = 3
+        p = 3359
+        shares = shamir.encrypt(secret, k, n, p)
+        self.assertEqual(len(shares), n)
+
+        dec_secret = shamir.decrypt(shares[:k], p)
+        self.assertEqual(dec_secret, secret)
+
+    def test_dot(self):
+        k = 2
+        n = 3
+        p = 3359
+
+        x = [1, 2, 3]
+        weight = [3500, -500, -400]
+        bias = 10
+        # 順伝播の値は、xとweightの内積
+        # 1 * 4 + 2 * 5 + 3 * 6 + 10 = 45
+
+        x_shares = shamir.array_encrypt(x, k, n, p)
+        x_shares1 = []
+        x_shares2 = []
+        x_shares3 = []
+        for i in range(len(x)):
+            x_shares1.append(x_shares[i][0])
+            x_shares2.append(x_shares[i][1])
+            x_shares3.append(x_shares[i][2])
+
+        weight_shares = shamir.array_encrypt(weight, k, n, p)
+        weight_shares1 = []
+        weight_shares2 = []
+        weight_shares3 = []
+        for i in range(len(weight)):
+            weight_shares1.append(weight_shares[i][0])
+            weight_shares2.append(weight_shares[i][1])
+            weight_shares3.append(weight_shares[i][2])
+
+        bias_shares = shamir.encrypt(bias, k, n, p)
+
+        # 順伝播の値を計算
+        output = util.dot(x, weight) + bias
+        output_shares1 = util.dot(x_shares1, weight_shares1) + bias_shares[0]
+        output_shares2 = util.dot(x_shares2, weight_shares2) + bias_shares[1]
+        output_shares3 = util.dot(x_shares3, weight_shares3) + bias_shares[2]
+
+        # 復元
+        dec_output = shamir.decrypt([output_shares1, output_shares2, output_shares3], p)
+        print(dec_output)
+        print(output)
+        self.assertEqual(dec_output, output)
+
+
+
     def test_add_sub(self):
         secret1 = 4
         secret2 = 2
@@ -125,11 +181,32 @@ class TestShamir(unittest.TestCase):
             dec_secret = shamir.decrypt(shares[:k], p)
             self.assertEqual(dec_secret, secret)
 
-    def test_try_dec(self):
-        shares = [7,7,7]
+    def test_23閾値分散法に変換できていること(self):
         P = 3359
-        dec = shamir.decrypt(shares, P)
+        K = 2
+        N = 3
+        secret1 = 10
+        secret2 = 20
+        shares1 = shamir.encrypt(secret1, K, N, P)
+        shares2 = shamir.encrypt(secret2, K, N, P)
+
+        p1 = shares1[0] * shares2[0]
+        p2 = shares1[1] * shares2[1]
+        p3 = shares1[2] * shares2[2]
+
+        p1_share = shamir.encrypt(p1, K, N, P)
+        p2_share = shamir.encrypt(p2, K, N, P)
+        p3_share = shamir.encrypt(p3, K, N, P)
+
+        dec1 = shamir.decrypt([p1_share[0], p2_share[0], p3_share[0]], P)
+        dec2 = shamir.decrypt([p1_share[1], p2_share[1], p3_share[1]], P)
+        dec3 = shamir.decrypt([p1_share[2], p2_share[2], p3_share[2]], P)
+
+        print(dec1, dec2, dec3)
+
+        dec = shamir.decrypt([dec1, dec2], P)
         print(dec)
+
 
     def test_try(self):
         P = 3359

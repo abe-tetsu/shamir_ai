@@ -1,4 +1,6 @@
-# 画像認識 ver2
+# 画像認識 ver3
+import time
+
 import numpy as np
 import matplotlib.pyplot as plt
 import shamir
@@ -11,32 +13,22 @@ Accuracy_weight = util.Accuracy_weight
 Accuracy_image = util.Accuracy_image
 
 
-def recognition(random_idx, x_test, loaded_weights, loaded_biases):
-    # 784*10個の重みに対して、それぞれ秘密分散する
-    loaded_weights1 = np.zeros((784, 10))
-    loaded_weights2 = np.zeros((784, 10))
-    loaded_weights3 = np.zeros((784, 10))
+def recognition(random_idx, x_test, loaded_weights, loaded_weights1, loaded_weights2, loaded_weights3, loaded_biases, loaded_biases1, loaded_biases2, loaded_biases3):
+    # 秘密分散した重みを復元すると、正しい重みになるか確認する
+    # print("weight :", loaded_weights[0])
+    # print("weight1:", loaded_weights1[0])
+    # print("weight2:", loaded_weights2[0])
+    # print("weight3:", loaded_weights3[0])
 
-    for i in range(len(loaded_weights)):
-        for j in range(len(loaded_weights[0])):
-            # 重みは float64 型なので、10000000倍して、int型に変換する
-            int_weights = int(loaded_weights[i][j] * Accuracy_weight)
-
-            shares = shamir.encrypt(int_weights, K, N, P)
-
-            # numpy.float64 型に戻す
-            loaded_weights1[i][j] = np.float64(shares[0])
-            loaded_weights2[i][j] = np.float64(shares[1])
-            loaded_weights3[i][j] = np.float64(shares[2])
-
-            # if int_weights != shamir.decrypt(shares[:K], P):
-            #     ValueError("error", int_weights, shamir.decrypt(shares[:K], P))
+    # dec_weight = shamir.array_decrypt33(loaded_weights1[0], loaded_weights2[0], loaded_weights3[0], P)
+    # print("dec_weight:", dec_weight)
 
     # 検出用画像データを秘密分散する
     # 秘密分散は正の整数しか扱えないので、Accuracy_image倍してintに変換する
-    test_image = []
-    for i in range(len(x_test[random_idx])):
-        test_image.append(int(x_test[random_idx][i] * Accuracy_image))
+    # test_image = []
+    # for i in range(len(x_test[random_idx])):
+    #     test_image.append(int(x_test[random_idx][i] * Accuracy_image))
+    test_image = x_test[random_idx]
 
     # 画像を秘密分散
     test_image_shares1 = []
@@ -48,18 +40,18 @@ def recognition(random_idx, x_test, loaded_weights, loaded_biases):
         test_image_shares2.append(shares[1])
         test_image_shares3.append(shares[2])
 
-        # if test_image[i] != shamir.decrypt(shares[:K], P):
-        #     ValueError("error", test_image[i], shamir.decrypt(shares[:K], P))
+        if test_image[i] != shamir.decrypt(shares[:K], P):
+            ValueError("error", test_image[i], shamir.decrypt(shares[:K], P))
 
     prediction0 = util.predict(x_test[random_idx], loaded_weights, [loaded_biases])
-    prediction1 = util.predict(test_image_shares1, loaded_weights1, [loaded_biases])
-    prediction2 = util.predict(test_image_shares2, loaded_weights2, [loaded_biases])
-    prediction3 = util.predict(test_image_shares3, loaded_weights3, [loaded_biases])
+    prediction1 = util.predict(test_image_shares1, loaded_weights1, [loaded_biases1])
+    prediction2 = util.predict(test_image_shares2, loaded_weights2, [loaded_biases2])
+    prediction3 = util.predict(test_image_shares3, loaded_weights3, [loaded_biases3])
 
     # 予測を復元
     prediction = []
     for i in range(len(prediction0)):
-        shares = [prediction1[i], prediction2[i], prediction3[i]]
+        shares = [int(prediction1[i]), int(prediction2[i]), int(prediction3[i])]
         prediction.append(shamir.decrypt(shares, P))
 
     prediction0 = [int(prediction0[i] * Accuracy_weight * Accuracy_image) for i in range(len(prediction0))]
@@ -71,12 +63,15 @@ def main():
     (x_train, _), (x_test, y_test) = util.load_data()
     x_train, x_test = util.transform_data(x_train, x_test)
     loaded_weights, loaded_biases = util.load_weights()
+    loaded_weights1, loaded_biases1 = util.load_encrypted_weight("weights1.pkl")
+    loaded_weights2, loaded_biases2 = util.load_encrypted_weight("weights2.pkl")
+    loaded_weights3, loaded_biases3 = util.load_encrypted_weight("weights3.pkl")
 
     # テストデータからランダムなインデックスを選択
     random_idx = np.random.randint(0, len(x_test))
 
     # 予測を実行
-    prediction, prediction0 = recognition(random_idx, x_test, loaded_weights, loaded_biases)
+    prediction, prediction0 = recognition(random_idx, x_test, loaded_weights, loaded_weights1, loaded_weights2, loaded_weights3, loaded_biases, loaded_biases1, loaded_biases2, loaded_biases3)
 
     # 画像を表示
     plt.imshow(x_test[random_idx].reshape(28, 28), cmap="gray")

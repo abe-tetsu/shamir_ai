@@ -6,6 +6,7 @@ import util
 Accuracy_weight = util.Accuracy_weight
 Accuracy_image = util.Accuracy_image
 
+
 def sigmoid(x):
     return 1.0 / (1.0 + np.exp(-x))
 
@@ -42,8 +43,8 @@ def train_network(x_train, y_train, epochs, learning_rate):
             # 誤差の計算
             ## バックプロパゲーションによる誤差の計算
             dz = a - y
-            dw = np.outer(x, dz)
-            # dw = util.outer(x, dz)
+            # dw = np.outer(x, dz)
+            dw = util.outer(x, dz)
             db = dz
 
             # 重みとバイアスの更新

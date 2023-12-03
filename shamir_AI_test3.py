@@ -1,7 +1,8 @@
 import time
 import numpy as np
 import util
-import recognition2
+import recognition3
+import shamir
 
 P = pow(2, 62) - 1
 K = 2
@@ -14,8 +15,13 @@ TestNum = 1000
 def main():
     test_start = time.time()
 
-    (_, _), (x_test, y_test) = util.load_data()
+    (x_train, y_train), (x_test, y_test) = util.load_data()
     loaded_weights, loaded_biases = util.load_weights()
+    x_train, x_test = util.transform_data(x_train, x_test)
+
+    loaded_weights1, loaded_biases1 = util.load_encrypted_weight("weights1.pkl")
+    loaded_weights2, loaded_biases2 = util.load_encrypted_weight("weights2.pkl")
+    loaded_weights3, loaded_biases3 = util.load_encrypted_weight("weights3.pkl")
 
     correct_count = 0
     correct_count_before_shamir = 0
@@ -24,7 +30,7 @@ def main():
 
     for i in range(TestNum):
         test_index = random_idx + i
-        prediction_shamir, prediction = recognition2.recognition(test_index, x_test, loaded_weights, loaded_biases)
+        prediction_shamir, prediction = recognition3.recognition(test_index, x_test, loaded_weights, loaded_weights1, loaded_weights2, loaded_weights3, loaded_biases, loaded_biases1, loaded_biases2, loaded_biases3)
         if np.argmax(prediction_shamir) == np.argmax(y_test[test_index]):
             correct_count += 1
         if np.argmax(prediction) == np.argmax(y_test[test_index]):
