@@ -108,10 +108,43 @@ def train_network(x_train, y_train, epochs, learning_rate):
             # decrypt_array_shamir23(biases1, biases2, biases3, biases, "バイアス")
 
             # 順伝播の計算
-            z = util.dot(x, weights) + biases
-            z0 = util.dot(x0, weights1) + biases1
-            z1 = util.dot(x1, weights2) + biases2
-            z2 = util.dot(x2, weights3) + biases3
+            # print("len:",len(x), len(weights), len(weights[0]))
+            z = []
+            z0 = []
+            z1 = []
+            z2 = []
+            for i in range(10):
+                zz = 0
+                for j in range(784):
+                    zz += x[j] * weights[j][i]
+                zz += biases[i]
+                z.append(zz)
+
+            for i in range(10):
+                zz = 0
+                for j in range(784):
+                    zz += x0[j] * weights1[j][i]
+                zz += biases1[i]
+                z0.append(zz)
+
+            for i in range(10):
+                zz = 0
+                for j in range(784):
+                    zz += x1[j] * weights2[j][i]
+                zz += biases2[i]
+                z1.append(zz)
+
+            for i in range(10):
+                zz = 0
+                for j in range(784):
+                    zz += x2[j] * weights3[j][i]
+                zz += biases3[i]
+                z2.append(zz)
+
+            # z = util.dot(x, weights) + biases
+            # z0 = util.dot(x0, weights1) + biases1
+            # z1 = util.dot(x1, weights2) + biases2
+            # z2 = util.dot(x2, weights3) + biases3
 
             # decrypt_array_shamir33(z0, z1, z2, z, "順伝播")
 
@@ -160,16 +193,6 @@ def train_network(x_train, y_train, epochs, learning_rate):
             for i in range(len(biases3)):
                 biases3[i] -= learning_rate * dz2[i]
 
-
-            #重みの復元チェック
-            # dec = shamir.array_decrypt33(weights1[0], weights2[0], weights3[0], P)
-            # print("秘密分散前:", int(weights[0][0]), int(weights[0][1]), int(weights[0][2]), int(weights[0][3]),
-            #       int(weights[0][4]), int(weights[0][5]), int(weights[0][6]), int(weights[0][7]), int(weights[0][8]),
-            #       int(weights[0][9]))
-            # print("秘密分散後:", dec[0], dec[1], dec[2], dec[3], dec[4], dec[5], dec[6], dec[7], dec[8], dec[9])
-            # print("----------------------------------")
-            # time.sleep(1)
-
         print(f"Epoch {epoch + 1}/{epochs}")
     print("training done")
     return weights, weights1, weights2, weights3, biases, biases1, biases2, biases3
@@ -185,7 +208,7 @@ def main():
     (x_train, y_train), (x_test, y_test) = util.load_data()
     x_train, x_test = util.transform_data(x_train, x_test)
 
-    weights, weights1, weights2, weights3, biases, biases1, biases2, biases3 = train_network(x_train[:10000], y_train[:10000], epochs=3, learning_rate=0.001)
+    weights, weights1, weights2, weights3, biases, biases1, biases2, biases3 = train_network(x_train[:10000], y_train[:10000], epochs=2, learning_rate=0.001)
     save_weights(weights, biases)
     save_weights(weights1, biases1, "weights1.pkl")
     save_weights(weights2, biases2, "weights2.pkl")

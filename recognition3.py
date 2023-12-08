@@ -43,10 +43,37 @@ def recognition(random_idx, x_test, loaded_weights, loaded_weights1, loaded_weig
         if test_image[i] != shamir.decrypt(shares[:K], P):
             ValueError("error", test_image[i], shamir.decrypt(shares[:K], P))
 
-    prediction0 = util.predict(x_test[random_idx], loaded_weights, [loaded_biases])
-    prediction1 = util.predict(test_image_shares1, loaded_weights1, [loaded_biases1])
-    prediction2 = util.predict(test_image_shares2, loaded_weights2, [loaded_biases2])
-    prediction3 = util.predict(test_image_shares3, loaded_weights3, [loaded_biases3])
+    prediction0 = []
+    prediction1 = []
+    prediction2 = []
+    prediction3 = []
+    for i in range(10):
+        zz = 0
+        for j in range(784):
+            zz += test_image[j] * loaded_weights[j][i]
+        zz += loaded_biases[i]
+        prediction0.append(zz)
+
+    for i in range(10):
+        zz = 0
+        for j in range(784):
+            zz += test_image_shares1[j] * loaded_weights1[j][i]
+        zz += loaded_biases[i]
+        prediction1.append(zz)
+
+    for i in range(10):
+        zz = 0
+        for j in range(784):
+            zz += test_image_shares2[j] * loaded_weights2[j][i]
+        zz += loaded_biases[i]
+        prediction2.append(zz)
+
+    for i in range(10):
+        zz = 0
+        for j in range(784):
+            zz += test_image_shares3[j] * loaded_weights3[j][i]
+        zz += loaded_biases[i]
+        prediction3.append(zz)
 
     # 予測を復元
     prediction = []

@@ -212,4 +212,10 @@ def outer(x, y):
     for i in x:
         for j in y:
             result.append(i * j)
-    return np.array(result, dtype=np.int64)
+
+    # dw[7840] から dw[784][10]に変換
+    new_result = []
+    for i in range(0, len(result), 10):
+        new_result.append(result[i:i+10])
+
+    return np.array(new_result, dtype=np.int64)
