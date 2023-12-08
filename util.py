@@ -17,12 +17,12 @@ def load_weights(filename="weights.pkl"):
     with open(filename, 'rb') as f:
         data = pickle.load(f)
 
-    # 重みの最小値を探索
-    min_weight_value = np.min(data['weights'])
-
-    # 最小値が負の場合、すべての重みにその値を加える
-    if min_weight_value < 0:
-        data['weights'] -= min_weight_value  # ここで負の最小値を加えることで、すべての重みが0以上になります
+    # # 重みの最小値を探索
+    # min_weight_value = np.min(data['weights'])
+    #
+    # # 最小値が負の場合、すべての重みにその値を加える
+    # if min_weight_value < 0:
+    #     data['weights'] -= min_weight_value  # ここで負の最小値を加えることで、すべての重みが0以上になります
 
     return data['weights'], data['biases']
 

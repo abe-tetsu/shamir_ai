@@ -9,7 +9,6 @@ K = 2
 N = 3
 Accuracy_weight = util.Accuracy_weight
 Accuracy_image = util.Accuracy_image
-TestNum = 1000
 
 
 def main():
@@ -26,29 +25,24 @@ def main():
     correct_count = 0
     correct_count_before_shamir = 0
     correct_count_without_shamir = 0
-    random_idx = np.random.randint(0, len(x_test) - TestNum)
 
-    for i in range(TestNum):
-        test_index = random_idx + i
-        prediction_shamir, prediction = recognition3.recognition(test_index, x_test, loaded_weights, loaded_weights1, loaded_weights2, loaded_weights3, loaded_biases, loaded_biases1, loaded_biases2, loaded_biases3)
-        if np.argmax(prediction_shamir) == np.argmax(y_test[test_index]):
+    for i in range(len(x_test)):
+        prediction_shamir, prediction = recognition3.recognition(i, x_test, loaded_weights, loaded_weights1, loaded_weights2, loaded_weights3)
+        if np.argmax(prediction_shamir) == np.argmax(y_test[i]):
             correct_count += 1
-        if np.argmax(prediction) == np.argmax(y_test[test_index]):
+        if np.argmax(prediction) == np.argmax(y_test[i]):
             correct_count_without_shamir += 1
         if np.argmax(prediction) == np.argmax(prediction_shamir):
             correct_count_before_shamir += 1
 
-    print(f"テストデータ数　　　　　　: {TestNum}")
-    accuracy = correct_count / TestNum
-    print(f"精度　　　　　　　　　　　: {accuracy * 100:.2f}%")
-
-    accuracy_before_shamir = correct_count_before_shamir / TestNum
-    print(f"秘密分散前の出力との一致率: {accuracy_before_shamir * 100:.2f}%")
-
-    accuracy_without_shamir = correct_count_without_shamir / TestNum
-    print(f"秘密分散なしの精度　　　　: {accuracy_without_shamir * 100:.2f}%")
-
+    accuracy = correct_count / len(x_test)
+    accuracy_before_shamir = correct_count_before_shamir / len(x_test)
+    accuracy_without_shamir = correct_count_without_shamir / len(x_test)
     test_end = time.time()
+    print(f"テストデータ数　　　　　　: {len(x_test)}")
+    print(f"精度　　　　　　　　　　　: {accuracy * 100:.2f}%")
+    print(f"秘密分散前の出力との一致率: {accuracy_before_shamir * 100:.2f}%")
+    print(f"秘密分散なしの精度　　　　: {accuracy_without_shamir * 100:.2f}%")
     print(f"テスト時間　　　　　　　　: {test_end - test_start} seconds")
 
 

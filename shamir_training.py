@@ -193,6 +193,16 @@ def train_network(x_train, y_train, epochs, learning_rate):
             for i in range(len(biases3)):
                 biases3[i] -= learning_rate * dz2[i]
 
+
+            #重みの復元チェック
+            # dec = shamir.array_decrypt33(weights1[0], weights2[0], weights3[0], P)
+            # print("秘密分散前:", int(weights[0][0]), int(weights[0][1]), int(weights[0][2]), int(weights[0][3]),
+            #       int(weights[0][4]), int(weights[0][5]), int(weights[0][6]), int(weights[0][7]), int(weights[0][8]),
+            #       int(weights[0][9]))
+            # print("秘密分散後:", dec[0], dec[1], dec[2], dec[3], dec[4], dec[5], dec[6], dec[7], dec[8], dec[9])
+            # print("----------------------------------")
+            # time.sleep(1)
+
         print(f"Epoch {epoch + 1}/{epochs}")
     print("training done")
     return weights, weights1, weights2, weights3, biases, biases1, biases2, biases3

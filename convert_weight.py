@@ -46,9 +46,6 @@ def main():
         weights_shares2.append(weights_shares2_row)
         weights_shares3.append(weights_shares3_row)
 
-    print(len(newWeights), len(newWeights[0]))
-    print(len(weights_shares1), len(weights_shares1[0]))
-
     # 秘密分散したweightを保存
     save_weights(weights_shares1, biases, "weights1.pkl")
     save_weights(weights_shares2, biases, "weights2.pkl")
