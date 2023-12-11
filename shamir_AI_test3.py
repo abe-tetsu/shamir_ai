@@ -15,12 +15,12 @@ def main():
     test_start = time.time()
 
     (x_train, y_train), (x_test, y_test) = util.load_data()
-    loaded_weights, loaded_biases = util.load_weights()
+    loaded_weights = util.load_weights("weights.pkl")
     x_train, x_test = util.transform_data(x_train, x_test)
 
-    loaded_weights1, loaded_biases1 = util.load_encrypted_weight("weights1.pkl")
-    loaded_weights2, loaded_biases2 = util.load_encrypted_weight("weights2.pkl")
-    loaded_weights3, loaded_biases3 = util.load_encrypted_weight("weights3.pkl")
+    loaded_weights1 = util.load_encrypted_weight("weights1.pkl")
+    loaded_weights2 = util.load_encrypted_weight("weights2.pkl")
+    loaded_weights3 = util.load_encrypted_weight("weights3.pkl")
 
     correct_count = 0
     correct_count_before_shamir = 0

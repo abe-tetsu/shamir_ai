@@ -14,16 +14,14 @@ Accuracy_image = util.Accuracy_image
 
 
 def recognition(random_idx, x_test, loaded_weights, loaded_weights1, loaded_weights2, loaded_weights3):
-    # for i in range(5):
-    #     index = np.random.randint(0, len(loaded_weights))
-    #     print("index:", index)
-    #     dec = shamir.array_decrypt23(loaded_weights1[index], loaded_weights2[index], P)
-    #     print("重み, 秘密分散前:", loaded_weights[index][0], loaded_weights[index][1], loaded_weights[index][2],
-    #           loaded_weights[index][3], loaded_weights[index][4], loaded_weights[index][5], loaded_weights[index][6],
-    #           loaded_weights[index][7], loaded_weights[index][8], loaded_weights[index][9])
-    #     print("重み, 秘密分散後:", dec[0], dec[1], dec[2], dec[3], dec[4], dec[5], dec[6], dec[7], dec[8], dec[9])
-    #     print("----------------------------")
-
+    for index in range(len(loaded_weights)):
+        print("index:", index)
+        dec = shamir.array_decrypt23(loaded_weights1[index], loaded_weights2[index], P)
+        print("重み, 秘密分散前:", loaded_weights[index][0], loaded_weights[index][1], loaded_weights[index][2],
+              loaded_weights[index][3], loaded_weights[index][4], loaded_weights[index][5], loaded_weights[index][6],
+              loaded_weights[index][7], loaded_weights[index][8], loaded_weights[index][9])
+        print("重み, 秘密分散後:", dec[0], dec[1], dec[2], dec[3], dec[4], dec[5], dec[6], dec[7], dec[8], dec[9])
+        print("----------------------------")
 
     # 検出用画像データを秘密分散する
     # 秘密分散は正の整数しか扱えないので、Accuracy_image倍してintに変換する
@@ -94,10 +92,10 @@ def main():
     print("P:", P, " P/2:", int(P/2))
     (x_train, _), (x_test, y_test) = util.load_data()
     x_train, x_test = util.transform_data(x_train, x_test)
-    loaded_weights, loaded_biases = util.load_weights()
-    loaded_weights1, loaded_biases1 = util.load_encrypted_weight("weights1.pkl")
-    loaded_weights2, loaded_biases2 = util.load_encrypted_weight("weights2.pkl")
-    loaded_weights3, loaded_biases3 = util.load_encrypted_weight("weights3.pkl")
+    loaded_weights = util.load_weights("weights.pkl")
+    loaded_weights1 = util.load_encrypted_weight("weights1.pkl")
+    loaded_weights2 = util.load_encrypted_weight("weights2.pkl")
+    loaded_weights3 = util.load_encrypted_weight("weights3.pkl")
 
     # テストデータからランダムなインデックスを選択
     random_idx = np.random.randint(0, len(x_test))

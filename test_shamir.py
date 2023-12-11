@@ -1,5 +1,5 @@
 import unittest
-from deep_learning import shamir
+import shamir
 import random
 import util
 
@@ -124,7 +124,35 @@ class TestShamir(unittest.TestCase):
         print(output)
         self.assertEqual(dec_output, output)
 
+    def test_minus2(self):
+        k = 2
+        n = 3
+        p = pow(2, 62) - 1
+        secret1 = -1
+        secret2 = 10
+        answer = 10 - (-1)
 
+        secret1_share = shamir.encrypt(secret1, k, n, p)
+        secret2_share = shamir.encrypt(secret2, k, n, p)
+        print(secret1_share)
+        print(secret2_share)
+
+        answer_share0 = secret2_share[0] - secret1_share[0]
+        answer_share1 = secret2_share[1] - secret1_share[1]
+        print(answer_share0)
+
+        dec_answer = shamir.decrypt([answer_share0, answer_share1], p)
+        print(dec_answer)
+        print(answer)
+
+    def test_minus3(self):
+        k = 2
+        n = 3
+        p = pow(2, 62) - 1
+        secret1 = -1
+
+        secret1_share = shamir.encrypt(secret1, k, n, p)
+        print(secret1_share)
 
     def test_add_sub(self):
         secret1 = 4

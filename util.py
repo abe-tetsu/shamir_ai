@@ -9,7 +9,7 @@ import shamir
 P = pow(2, 62) - 1
 K = 2
 N = 3
-Accuracy_weight = 10000
+Accuracy_weight = 1000000000000
 Accuracy_image = 2
 
 
@@ -17,37 +17,14 @@ def load_weights(filename="weights.pkl"):
     with open(filename, 'rb') as f:
         data = pickle.load(f)
 
-    # # 重みの最小値を探索
-    # min_weight_value = np.min(data['weights'])
-    #
-    # # 最小値が負の場合、すべての重みにその値を加える
-    # if min_weight_value < 0:
-    #     data['weights'] -= min_weight_value  # ここで負の最小値を加えることで、すべての重みが0以上になります
-
-    return data['weights'], data['biases']
-
-    # #重みの最小値を探索
-    # min_weight_value = np.min(data['weights'])
-    #
-    # # 最小値が(-P/2)を下回った場合、エラーを出す
-    # if min_weight_value < -P / 2:
-    #     raise ValueError("Minimum weight value is less than -P/2.", min_weight_value)
-    #
-    # # 重みの最大値を探索
-    # max_weight_value = np.max(data['weights'])
-    #
-    # # 最大値が(P/2)を上回った場合、エラーを出す
-    # if max_weight_value > P / 2:
-    #     raise ValueError("Maximum weight value is greater than P/2.", max_weight_value)
-    #
-    # return data['weights'], data['biases']
+    return data['weights']
 
 
 def load_encrypted_weight(filename):
     with open(filename, 'rb') as f:
         data = pickle.load(f)
 
-    return data['weights'], data['biases']
+    return data['weights']
 
 
 def load_data():
@@ -71,7 +48,16 @@ def transform_data(x_train, x_test):
 
     return x_train_scaled_images, x_test_scaled_images
 
+def compare_arrays(arr1, arr2):
+    # 同じ長さでなければエラー
+    if len(arr1) != len(arr2) or len(arr1) != 10:
+        raise ValueError("Both arrays must have a length of 10.")
 
+    # 各要素の差が1以内かどうかをチェック
+    for i in range(len(arr1)):
+        if abs(arr1[i] - arr2[i]) > 10000:
+            return False
+    return True
 
 def array_max(array):
     max = array[0]

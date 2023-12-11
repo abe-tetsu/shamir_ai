@@ -2,30 +2,61 @@ import random
 import numpy
 
 
-def lagrange_interpreter(x_list, i):
-    x_i = x_list[i]
-    res = 1
-    for cnt, x_atom in enumerate(x_list):
-        if cnt != i:
-            res *= (0 - x_atom) / (x_i - x_atom)
-    return res
+# def lagrange_interpreter(x_list, i):
+#     x_i = x_list[i]
+#     res = 1
+#     for cnt, x_atom in enumerate(x_list):
+#         if cnt != i:
+#             res *= (0 - x_atom) / (x_i - x_atom)
+#     return res
+
+
+# def lagrange(x_list, y_list):
+#     res = 0
+#
+#     for n in range(len(x_list)):
+#         res += lagrange_interpreter(x_list, n) * y_list[n]
+#     return res
+#
+#
+# def decrypt(shares, p):
+#     print("shares:",shares, "p:", p)
+#     # 整数じゃないときエラーを返す
+#     for share in shares:
+#         if int != type(share) and numpy.int64 != type(share):
+#             pass
+#             # raise ValueError("decrypt function: share is not int type.", share, "type:", type(share))
+#
+#     k = len(shares)
+#     x_list = [i + 1 for i in range(k)]
+#     y_list = shares
+#     f0 = lagrange(x_list, y_list)
+#     f0_mod = int(f0 % p)
+#
+#     # 復元された値がpの半分より大きい場合、それを負の数として扱う
+#     print("f0_mod:", f0_mod)
+#     if f0_mod > p // 2:
+#         print("f0_mod > p // 2")
+#         print("f0_mod_before:", f0_mod)
+#         f0_mod -= p
+#         print("f0_mod_after:", f0_mod)
+#
+#     return f0_mod
 
 
 def lagrange(x_list, y_list):
     res = 0
-
     for n in range(len(x_list)):
-        res += lagrange_interpreter(x_list, n) * y_list[n]
+        res_n = y_list[n]
+        for m in range(len(x_list)):
+            if m != n:
+                res_n *= (0 - x_list[m]) // (x_list[n] - x_list[m])
+        res += res_n
     return res
 
 
 def decrypt(shares, p):
-    # 整数じゃないときエラーを返す
-    for share in shares:
-        if int != type(share) and numpy.int64 != type(share):
-            pass
-            # raise ValueError("decrypt function: share is not int type.", share, "type:", type(share))
-
+    # print("shares:", shares)
     k = len(shares)
     x_list = [i + 1 for i in range(k)]
     y_list = shares
@@ -34,6 +65,7 @@ def decrypt(shares, p):
 
     # 復元された値がpの半分より大きい場合、それを負の数として扱う
     if f0_mod > p // 2:
+        # print("f0_mod > p // 2")
         f0_mod -= p
 
     return f0_mod
@@ -66,7 +98,7 @@ def encrypt(secret_int, k, n, p):
         raise ValueError("encrypt must be int type.")
 
     # 係数をランダムに決める
-    a = [random.randint(0, 100) for _ in range(k - 1)]
+    a = [random.randint(1000, 10000) for _ in range(k - 1)]
 
     # n個のシェアを作成する
     shares = []
@@ -77,6 +109,17 @@ def encrypt(secret_int, k, n, p):
         share += secret_int
         share %= p
         shares.append(share)
+
+        # print("secret_int:", secret_int)
+        # print("係数:", a)
+        # print("シェア:", shares)
+
+
+        if share > p//2:
+            print("超えたよ！", share, p)
+            print("secret_int:", secret_int)
+            print("係数:", a)
+            print("シェア:", shares)
 
     # shares = [int(share) for share in shares]
     return shares
