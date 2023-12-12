@@ -154,6 +154,21 @@ class TestShamir(unittest.TestCase):
         secret1_share = shamir.encrypt(secret1, k, n, p)
         print(secret1_share)
 
+    def test_multi(self):
+        k = 2
+        n = 3
+        p = pow(2, 62) - 1
+        secret = 46
+        shares = shamir.encrypt(secret, k, n, p)
+        print(shares)
+
+        share1 = shares[0] * 0.1
+        share2 = shares[1] * 0.1
+        share3 = shares[2] * 0.1
+
+        dec = shamir.decrypt([share1, share2, share3], p)
+        print(dec)
+
     def test_add_sub(self):
         secret1 = 4
         secret2 = 2

@@ -9,7 +9,7 @@ import shamir
 P = pow(2, 62) - 1
 K = 2
 N = 3
-Accuracy_weight = 1000000000000
+Accuracy_weight = 10000
 Accuracy_image = 2
 
 
@@ -55,7 +55,7 @@ def compare_arrays(arr1, arr2):
 
     # 各要素の差が1以内かどうかをチェック
     for i in range(len(arr1)):
-        if abs(arr1[i] - arr2[i]) > 10000:
+        if abs(arr1[i] - arr2[i]) > 1:
             return False
     return True
 
